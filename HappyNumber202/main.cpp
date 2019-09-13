@@ -9,43 +9,36 @@
 #include <iostream>
 #include <string>
 #include <set>
-#include <math.h>
 
 using namespace std;
 
-class Solution {
-public:
-    bool isHappy(int n) {
-        set<int> sumHolder;
-        set<int>::iterator it;
-        int num = n;
-        while(num != 1){
-            int sum;
-            string numberString = to_string(num);
-            int length = numberString.length();
-            //Go through string and get the sum of the square of the digits
-            for(int i=0; i<length; i++) {
-                sum += (int(numberString[i] - '0') * int(numberString[i]- '0'));
-            }
-            //If sum found in the set = cycle
-            it = sumHolder.find(sum);
-            if(*it == sum){
-                return false;
-            }
-            else{
-                sumHolder.insert(sum);
-            }
-            num = sum;
-            sum = 0;
-        }
+bool happyOrNot(set<int> sumHolder, int n){
+    int sum = 0;
+    //Convert to string and sum the squares of the digits
+    string numberString = to_string(n);
+    for(int i=0; i<numberString.length(); i++) {
+        sum += (int(numberString[i] - '0') * int(numberString[i]- '0'));
+    }
+    set<int>::iterator it = sumHolder.find(sum);
+    //If sum = 1, happy
+    if(sum == 1){
         return true;
     }
-};
+    //If sum exists in the set, in a cycle
+    else if(*it == sum){
+        return false;
+    }
+    //If neither, add to the set and continue recursing
+    else{
+        sumHolder.insert(sum);
+        return happyOrNot(sumHolder, sum);
+    }
+    return false;
+}
 
 int main() {
-    // insert code here...
-    Solution test;
+    set<int> sumHolder;
     int number = 30;
-    bool answer = test.isHappy(number);
+    bool answer = happyOrNot(sumHolder, number);
     cout << (answer?"It is a happy number \n":"It is not a happy number \n");
 }
